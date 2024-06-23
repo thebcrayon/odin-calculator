@@ -9,14 +9,26 @@ const numberDisplay = document.querySelector('.num-display p');
 calcButtonGroup.addEventListener('click', buttonHandler);
 
 function buttonHandler(event) {
-    let targetTargetClassList = event.target.classList;
-    let element = event.target;
-    let string = element.textContent;
-    console.table(string);
+    let buttonInfo = {
+        classList: Array.from(event.target.classList),
+        element: event.target,
+        text: event.target.textContent,
+    }
+    console.log(buttonInfo.classList);
+    clearDisplay(buttonInfo.classList);
+    addToDisplay(buttonInfo.classList, buttonInfo.text);
 }
 
-function displayKey(element, string) {
+function clearDisplay(ary) {
+    if (ary.includes('clear')){
+        numberDisplay.textContent = '';
+    }
+}
 
+function addToDisplay(ary, string) {
+    if (ary.includes('display')){
+        numberDisplay.append(string);
+    }
 }
 
 function operate(a, b, operator) {
