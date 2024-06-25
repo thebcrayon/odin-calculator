@@ -88,7 +88,7 @@ body {
 }
 
 .num-display {
-    flex: 1;
+    flex: .5;
     display: flex;
     justify-content: flex-end;
     flex-direction: column;
