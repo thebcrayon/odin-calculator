@@ -4,8 +4,8 @@ calcButtonGroup.addEventListener('click', buttonHandler);
 
 const calcExp = {
     init: true,
-    operandA: undefined,
-    operandB: undefined,
+    operandA: 0,
+    operandB: 0,
     operator: undefined,
     currentButton: undefined,
     clear: function () {
@@ -27,26 +27,12 @@ function buttonHandler(event) {
     let buttonClassList = calcExp.currentButton.classList;
     const BUTTON_AC = buttonClassList.includes('clear');
     const BUTTON_NUM = buttonClassList.includes('number');
+    const BUTTON_OPERATOR = buttonClassList.includes('operator');
+    const BUTTON_EQUALS = buttonClassList.includes('equals');
     const BUTTON_MOD = (buttonClassList.includes('pos-neg') || buttonClassList.includes('percent'));
 
     if (BUTTON_AC) {
         resetCalculator();
-    }
-
-    if (BUTTON_MOD) {
-        let OPERAND_NO_A_NO_B = (!calcExp.operandA) && (!calcExp.operandB);
-        let OPERAND_A_NO_B = (calcExp.operandA) && (!calcExp.operandB);
-        let OPERAND_A_B = (calcExp.operandA) && (calcExp.operandB);
-
-        if (calcDisplay.textContent !== '0') {
-            if (OPERAND_NO_A_NO_B) {
-                // 1. Modify and 2. Set operandA
-            } else if (OPERAND_A_NO_B || OPERAND_A_B) {
-                // 1. Modify and 2 set operand B
-            }
-        } else {
-            calcExp.init = true;
-        }
     }
 
     if (BUTTON_NUM) {
@@ -55,24 +41,45 @@ function buttonHandler(event) {
             calcExp.init = false;
         } else if (calcExp.operandA) {
             if (calcExp.operator) {
-                updateDisplay(calcExp.currentButton.textValue, true);
-            } else {
-                updateDisplay(calcExp.currentButton.textValue, true);
-                calcExp.operandA = undefined;
+                updateDisplay(calcExp.currentButton.textValue, false);
             }
         } else {
             updateDisplay(calcExp.currentButton.textValue, false);
         }
     }
 
+    if (BUTTON_OPERATOR) {
+        calcExp.init = true;
+        if (BUTTON_EQUALS) {
+            if (calcExp.operandA) {
+                const a = parseFloat(calcExp.operandA);
+                const b = parseFloat(getDisplayValue());
+                updateDisplay(operate(a, b, calcExp.operator), true);
+            }
+        } else if (calcExp.operator) {
+            setOperator();
+        } else {
+            setOperator();
+            setOperandA();
+        }
+    }
+
 }
 
-function updateSign(string) {
-
+function getDisplayValue() {
+    return calcDisplay.textContent;
 }
 
-function convertToPercent(string) {
+function setOperandA() {
+    calcExp.operandA = calcDisplay.textContent;
+}
 
+function setOperandB() {
+    calcExp.operandB = calcDisplay.textContent;
+}
+
+function setOperator() {
+    calcExp.operator = calcExp.currentButton.textValue;
 }
 
 function resetCalculator() {
@@ -86,7 +93,16 @@ function updateDisplay(string = '0', clearDisplay = true) {
 }
 
 function operate(a, b, operator) {
-    return add(a, b);
+    switch (operator) {
+        case '+':
+            return add(a, b);
+        case '−':
+            return subtract(a, b);
+        case '×':
+            return multply(a, b);
+        case '÷':
+            return divide(a, b);
+    }
 }
 
 function add(a, b) {
