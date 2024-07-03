@@ -43,16 +43,17 @@ function buttonHandler(event) {
     if (BUTTON_NUM) {
         if (calcExp.previousButton) {
             const previousButton = calcExp.previousButton.classList[0];
-            const previousButtonValue = calcExp.previousButton.textValue;
             switch (previousButton) {
                 case 'number':
-                    updateDisplay(currentButtonValue, false);
-                    break;
                 case 'decimal':
                     updateDisplay(currentButtonValue, false);
+                    if (calcExp.operandA) {
+                        setOperandB();
+                    }
                     break;
                 case 'operator':
                     updateDisplay(currentButtonValue, true);
+                    setOperandB();
                     break;
                 case 'modifier':
                     calcExp.clear();
@@ -61,53 +62,6 @@ function buttonHandler(event) {
             }
         } else {
             updateDisplay(currentButtonValue, true);
-        }
-    }
-
-    if (BUTTON_OPERATOR) {
-        if (calcExp.previousButton) {
-            const previousButton = calcExp.previousButton.classList[0];
-            const currentDisplayValue = parseFloat(getDisplayValue());
-            switch (previousButton) {
-                case 'clear':
-                    setOperandA();
-                    setOperator();
-                    break;
-                case 'number':
-                    if (calcExp.operandA) {
-                        if (calcExp.operator) {
-                            //This order matters. Operator && lastbutton == number. 
-                            //setOperandA stores screen content to continue computing.
-                            sendToOperate();
-                            setOperandA();
-                            setOperator();
-                            decimalBtn.disabled = false;
-                        } else {
-                            setOperator();
-                        }
-                    } else {
-                        setOperandA();
-                        setOperator();
-                        decimalBtn.disabled = false;
-                    }
-                    break;
-                case 'operator':
-                    setOperator();
-                    break;
-                case 'modifier':
-                    setOperandA();
-                    setOperator();
-                    decimalBtn.disabled = false;
-                    break;
-                case 'decimal':
-                    setOperandA();
-                    setOperator();
-                    alert('calculate if 6. something but not 0. something.');
-                    break;
-            }
-        } else {
-            setOperandA();
-            setOperator();
         }
     }
 
@@ -123,6 +77,7 @@ function buttonHandler(event) {
                     break;
                 case 'operator':
                     updateDisplay(`0${currentButtonValue}`, true);
+                    decimalBtn.disabled = true;
                     break;
                 case 'modifier':
                     if (calcExp.operandA) {
@@ -149,27 +104,83 @@ function buttonHandler(event) {
         }
     }
 
+    if (BUTTON_OPERATOR) {
+        if (calcExp.previousButton) {
+            const previousButton = calcExp.previousButton.classList[0];
+            switch (previousButton) {
+                case 'clear':
+                    setOperandA();
+                    setOperator();
+                    break;
+                case 'number':
+                    if (calcExp.operandA) {
+                        if (calcExp.operator) {
+                            setOperandB();
+                            sendToOperate();
+                            setOperandA();
+                            setOperator();
+                            decimalBtn.disabled = false;
+                        } else {
+                            setOperator();
+                        }
+                    } else {
+                        setOperandA();
+                        setOperator();
+                        decimalBtn.disabled = false;
+                    }
+                    break;
+                case 'operator':
+                    setOperator();
+                    break;
+                case 'modifier':
+                    setOperandA();
+                    setOperator();
+                    decimalBtn.disabled = false;
+                    break;
+                case 'decimal':
+                    updateDisplay(getDisplayValue(), true);
+                    setOperandA();
+                    setOperator();
+                    decimalBtn.disabled = false;
+                    break;
+                case 'equals':
+                    setOperator();
+            }
+        } else {
+            setOperandA();
+            setOperator();
+        }
+    }
+
     if (BUTTON_MODIFIER) {
         const currentDisplayValue = parseFloat(getDisplayValue());
         if (calcExp.previousButton) {
             const previousButton = calcExp.previousButton.classList[0];
+            const modifierType = calcExp.currentButton.textValue;
+            const percentSign = '%';
             switch (previousButton) {
                 case 'number':
                     if (currentDisplayValue !== 0) {
-                        modifyNumber(currentDisplayValue, currentButtonValue);
-                        setOperandA();
-                    } else {
-                        alert('trying to modify 0 value');
+                        if (modifierType == percentSign) {
+                            if (calcExp.operandA) {
+                                let percentage = calcExp.operandA * (calcExp.operandB / 100);
+                                updateDisplay(Number(percentage.toFixed(2)), true);
+                                setOperandB();
+                            } else {
+                                modifyNumber(currentDisplayValue, currentButtonValue);
+                            }
+                        } else { 
+                            modifyNumber(currentDisplayValue, currentButtonValue);
+                            calcExp.operandB ? setOperandB() : setOperandA();
+                        }
                     }
                     break;
-                case 'operator':
-                    break;
                 case 'modifier':
+                case 'equals':
+                case 'operator':
                     if (currentDisplayValue !== 0) {
                         modifyNumber(currentDisplayValue, currentButtonValue);
-                        setOperandA();
-                    } else {
-                        alert('nope, but with a previous button value')
+                        calcExp.operandB ? setOperandB() : setOperandA();
                     }
                     break;
                 case 'decimal':
@@ -177,7 +188,6 @@ function buttonHandler(event) {
                     updateDisplay();
                     decimalBtn.disabled = true;
                     break;
-
             }
         } else {
             if (currentDisplayValue !== 0) {
@@ -189,15 +199,49 @@ function buttonHandler(event) {
         }
     }
 
-    console.log(`operandA: ${calcExp.operandA} , operator: ${calcExp.operator}`);
-
+    if (BUTTON_EQUALS) {
+        if (calcExp.previousButton) {
+            const previousButton = calcExp.previousButton.classList[0];
+            switch (previousButton) {
+                case 'number':
+                    if (calcExp.operandA && calcExp.operandB) {
+                        sendToOperate();
+                        setOperandA();
+                        decimalBtn.disabled = false;
+                    }
+                    break;
+                case 'operator':
+                    setOperandB();
+                    sendToOperate();
+                    break;
+                case 'decimal':
+                    updateDisplay(getDisplayValue(), true);
+                    setOperandA();
+                    decimalBtn.disabled = false;
+                    break;
+                case 'modifier':
+                    if (calcExp.operandA && calcExp.operandB) {
+                        sendToOperate();
+                        setOperandA();
+                        decimalBtn.disabled = false;
+                    }
+                    break;
+                case 'equals':
+                    setOperandA();
+                    sendToOperate();
+                    break;
+            }
+        } else {
+            alert('nothing here before');
+        }
+    }
+    console.log(`operandA: ${calcExp.operandA} , operator: ${calcExp.operator}, operandB: ${calcExp.operandB}`);
 }
 
 function sendToOperate() {
     const a = calcExp.operandA;
-    const b = getDisplayValue();
-    updateDisplay(operate(a, b, calcExp.operator), true);
-    calcExp.operator = undefined;
+    const b = calcExp.operandB;
+    updateDisplay(Number(operate(a, b, calcExp.operator).toFixed(4)), true);
 }
 
 function countDecimals() {
@@ -219,7 +263,7 @@ function setOperandA() {
 }
 
 function setOperandB() {
-    calcExp.operandA = parseFloat(calcDisplay.textContent);
+    calcExp.operandB = parseFloat(calcDisplay.textContent);
 }
 
 function setOperator() {
