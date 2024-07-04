@@ -46,6 +46,17 @@ function buttonHandler(event) {
             const previousButton = calcExp.previousButton.classList[0];
             switch (previousButton) {
                 case 'number':
+                    if (getDisplayValue() == 0) {
+                        updateDisplay(currentButtonValue, true);
+                    } else {
+                        if (calcExp.operandA) {
+                            updateDisplay(currentButtonValue, false);
+                            setOperandB();
+                        } else {
+                            updateDisplay(currentButtonValue, false);
+                        }
+                    }
+                    break;
                 case 'decimal':
                     updateDisplay(currentButtonValue, false);
                     if (calcExp.operandA) {
@@ -57,7 +68,7 @@ function buttonHandler(event) {
                     setOperandB();
                     break;
                 case 'modifier':
-                    calcExp.clear();
+                    resetCalculator();
                     updateDisplay(currentButtonValue, true);
                     break;
             }
@@ -106,13 +117,13 @@ function buttonHandler(event) {
     }
 
     if (BUTTON_OPERATOR) {
-        calcExp.currentButton.element.classList.toggle('selected');
         if (calcExp.previousButton) {
             const previousButton = calcExp.previousButton.classList[0];
             switch (previousButton) {
                 case 'clear':
                     setOperandA();
                     setOperator();
+                    highlightOperator();
                     break;
                 case 'number':
                     if (calcExp.operandA) {
@@ -121,36 +132,58 @@ function buttonHandler(event) {
                             sendToOperate();
                             setOperandA();
                             setOperator();
+                            highlightOperator();
                             decimalBtn.disabled = false;
                         } else {
                             setOperator();
+                            highlightOperator();
                         }
                     } else {
                         setOperandA();
                         setOperator();
+                        highlightOperator();
                         decimalBtn.disabled = false;
                     }
                     break;
                 case 'operator':
                     setOperator();
+                    highlightOperator();
                     break;
                 case 'modifier':
-                    setOperandA();
-                    setOperator();
-                    decimalBtn.disabled = false;
+                    if (calcExp.operandA) {
+                        if (calcExp.operator) {
+                            setOperandB();
+                            sendToOperate();
+                            setOperandA();
+                            setOperator();
+                            highlightOperator();
+                            decimalBtn.disabled = false;
+                        } else {
+                            setOperator();
+                            highlightOperator();
+                        }
+                    } else {
+                        setOperandA();
+                        setOperator();
+                        highlightOperator();
+                        decimalBtn.disabled = false;
+                    }
                     break;
                 case 'decimal':
                     updateDisplay(getDisplayValue(), true);
                     setOperandA();
                     setOperator();
+                    highlightOperator();
                     decimalBtn.disabled = false;
                     break;
                 case 'equals':
                     setOperator();
+                    highlightOperator();
             }
         } else {
             setOperandA();
             setOperator();
+            highlightOperator();
         }
     }
 
@@ -165,7 +198,7 @@ function buttonHandler(event) {
                     if (currentDisplayValue !== 0) {
                         if (modifierType == percentSign) {
                             if (calcExp.operandA) {
-                                let percentage = calcExp.operandA * (calcExp.operandB / 100);
+                                let percentage = calcExp.operandA * (getDisplayValue() / 100);
                                 updateDisplay(Number(percentage.toFixed(2)), true);
                                 setOperandB();
                             } else {
@@ -195,8 +228,6 @@ function buttonHandler(event) {
             if (currentDisplayValue !== 0) {
                 modifyNumber(currentDisplayValue, currentButtonValue);
                 setOperandA();
-            } else {
-                alert('nope');
             }
         }
     }
@@ -240,6 +271,27 @@ function buttonHandler(event) {
     console.log(`operandA: ${calcExp.operandA} , operator: ${calcExp.operator}, operandB: ${calcExp.operandB}`);
 }
 
+function highlightOperator() {
+    document.querySelector('.add').classList.remove('selected');
+    document.querySelector('.subtract').classList.remove('selected');
+    document.querySelector('.multiply').classList.remove('selected');
+    document.querySelector('.divide').classList.remove('selected');
+    switch (calcExp.operator) {
+        case '+':
+            document.querySelector('.add').classList.add('selected');
+            break;
+        case '−':
+            document.querySelector('.subtract').classList.add('selected');
+            break;
+        case '×':
+            document.querySelector('.multiply').classList.add('selected');
+            break;
+        case '÷':
+            document.querySelector('.divide').classList.add('selected');
+            break;
+    }
+}
+
 function sendToOperate() {
     const a = calcExp.operandA;
     const b = calcExp.operandB;
@@ -275,6 +327,10 @@ function setOperator() {
 function resetCalculator() {
     calcExp.clear();
     decimalBtn.disabled = false;
+    document.querySelector('.add').classList.remove('selected');
+    document.querySelector('.subtract').classList.remove('selected');
+    document.querySelector('.multiply').classList.remove('selected');
+    document.querySelector('.divide').classList.remove('selected');
     updateDisplay();
 }
 
