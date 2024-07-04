@@ -69,60 +69,115 @@ h6 {
 
 body {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-around;
     align-items: center;
     height: 100vh;
+    background-color: #ffcb45;
+}
+body,
+body .row,
+.num-display p {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+        "slnt" 0;
 }
 
 .calc-body {
     display: flex;
-    flex-wrap: wrap;
     flex-direction: column;
     width: 300px;
     height: 500px;
-    margin: 0 auto;
-    border: 1px solid black;
-    padding: 5px;
     gap: 5px;
-    border-radius: 4px;
+    border-radius: 12px;
+    background-color: #3A3A3A;
+    box-shadow: 10px 10px 100px rgba(255, 231, 48, 1);
 }
 
 .num-display {
-    flex: .5;
+    flex: .7;
     display: flex;
     justify-content: flex-end;
     flex-direction: column;
-    background-color: #f2f2f2;
-    border-radius: 4px;
-    border: 1px solid #dddddd;
+    background-color: #333333;
+    border: 1px solid #494949;
+    border-radius: 12px 12px 0px 0px;
 }
 
 .num-display p {
     text-align: right;
-    font-size: 2em;
+    font-size: 3em;
+    font-weight: 200;
     padding: 0px 10px 5px 0px;
+    color: white;
 }
 
 .num-pad {
     flex: 2;
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 12px;
+    padding: 15px;
 }
 
 .row {
     flex: 1;
     display: flex;
-    gap: 5px;
+    gap: 12px;
 }
 
 .row>.left,
 .row>.right {
     flex: 1;
     display: flex;
-    gap: 5px;
+    gap: 12px;
+}
+
+.clear,
+.modifier {
+    border: 1px solid #535353;
+    color: #FFC640;
+    background-color: #444444;
+}
+
+.operator,
+.equals {
+    color: black;
+    background-color: #FFC640;
+}
+
+.number,
+.decimal {
+    border: 1px solid #535353;
+    font-size: 25px;
+    color: #FFEEC6;
+    background-color: #343434;
 }
 
 button {
     flex: 1;
+    font-size: 20px;
+    border-radius: 50px;
+    border-style: none;
+    box-shadow: 0px 4px 5px rgba(0, 0, 0, .25), inset 1px 1em 10px rgba(255, 188, 30, 0.05);
+}
+
+.selected {
+    background-color: #FFEEC6;
+}
+
+.footer {
+    align-self: center;
+    text-align: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: #724e18;
+}
+
+.footer a {
+    text-decoration: none;
+    font-weight: bold;
+    color: #ff9109;
 }

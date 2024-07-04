@@ -25,6 +25,7 @@ function buttonHandler(event) {
     calcExp['currentButton'] = {
         classList: Array.from(event.target.classList),
         textValue: event.target.textContent,
+        element: event.target,
     }
 
     const buttonClassList = calcExp.currentButton.classList;
@@ -105,6 +106,7 @@ function buttonHandler(event) {
     }
 
     if (BUTTON_OPERATOR) {
+        calcExp.currentButton.element.classList.toggle('selected');
         if (calcExp.previousButton) {
             const previousButton = calcExp.previousButton.classList[0];
             switch (previousButton) {
@@ -169,7 +171,7 @@ function buttonHandler(event) {
                             } else {
                                 modifyNumber(currentDisplayValue, currentButtonValue);
                             }
-                        } else { 
+                        } else {
                             modifyNumber(currentDisplayValue, currentButtonValue);
                             calcExp.operandB ? setOperandB() : setOperandA();
                         }
