@@ -74,6 +74,10 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #ffb800;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-attachment: fixed;
 }
 body,
 body .row,
