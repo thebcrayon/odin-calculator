@@ -209,7 +209,7 @@ function buttonHandler(event) {
             if (modifierType == percentSign) {
               if (calcExp.operandA) {
                 let percentage = calcExp.operandA * (getDisplayValue() / 100);
-                updateDisplay(Number(percentage.toPrecision(5)), true);
+                updateDisplay(Number(percentage.toPrecision(9)), true);
                 setOperandB();
               } else {
                 modifyNumber(currentDisplayValue, currentButtonValue);
@@ -233,7 +233,15 @@ function buttonHandler(event) {
             if (modifierType == pos_neg) {
               modifyNumber(currentDisplayValue, currentButtonValue);
               setOperandA();
-              calcExp.operandB = 0;
+              resetOperandB();
+              resetOperator();
+              removeOperatorHighlights();
+              decimalBtn.disabled = false;
+            } else {
+              resetOperandB();
+              resetOperator();
+              modifyNumber(currentDisplayValue, currentButtonValue);
+              setOperandA();
             }
           }
           break;
@@ -286,11 +294,21 @@ function buttonHandler(event) {
             resetOperator();
             removeOperatorHighlights();
             decimalBtn.disabled = false;
+          } else if (calcExp.operandA && !calcExp.operandB) {
+            setOperandB();
+            setPrevOperandB();
+            setPrevOperator();
+            sendToOperate();
+            resetOperandB();
+            resetOperator();
+            removeOperatorHighlights();
+            decimalBtn.disabled = false;
           }
           break;
         case 'equals':
           setOperandA();
           sendToOperate(calcExp.operandA, calcExp.prev_operandB);
+          setOperandA();
           break;
       }
     } else {
@@ -326,7 +344,7 @@ function highlightOperator() {
 }
 
 function sendToOperate(a = calcExp.operandA, b = calcExp.operandB) {
-  updateDisplay(Number(operate(a, b, calcExp.operator ? calcExp.operator : calcExp.prev_operator).toPrecision(5)), true);
+  updateDisplay(Number(operate(a, b, calcExp.operator ? calcExp.operator : calcExp.prev_operator).toPrecision(9)), true);
 }
 
 function countDecimals() {
