@@ -199,7 +199,7 @@ function buttonHandler(event) {
                         if (modifierType == percentSign) {
                             if (calcExp.operandA) {
                                 let percentage = calcExp.operandA * (getDisplayValue() / 100);
-                                updateDisplay(Number(percentage.toFixed(2)), true);
+                                updateDisplay(Number(percentage.toPrecision(2)), true);
                                 setOperandB();
                             } else {
                                 modifyNumber(currentDisplayValue, currentButtonValue);
@@ -295,7 +295,7 @@ function highlightOperator() {
 function sendToOperate() {
     const a = calcExp.operandA;
     const b = calcExp.operandB;
-    updateDisplay(Number(operate(a, b, calcExp.operator).toFixed(4)), true);
+    updateDisplay(Number(operate(a, b, calcExp.operator).toPrecision(4)), true);
 }
 
 function countDecimals() {
