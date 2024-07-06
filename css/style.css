@@ -74,10 +74,6 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #ffb800;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
 }
 body,
 body .row,
@@ -92,9 +88,8 @@ body .row,
 .calc-body {
     display: flex;
     flex-direction: column;
-    width: 300px;
     height: 500px;
-    gap: 5px;
+    min-width: 300px;
     border-radius: 12px;
     background-color: #3A3A3A;
     box-shadow: 10px 10px 100px rgba(255, 231, 48, 1);
@@ -122,7 +117,7 @@ body .row,
     flex: 2;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     padding: 15px;
 }
 
